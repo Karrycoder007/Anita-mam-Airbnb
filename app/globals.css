@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+body { @apply bg-chalk font-sans text-forest antialiased; }
+::selection { background: #6B7041; color: #F5F6F0; }
+:focus-visible { outline: 2px solid #6B7041; outline-offset: 3px; }
+
+.h-mask { display: block; overflow: hidden; padding-bottom: .08em; }
+.h-mask > span { display: block; will-change: transform; }
+
+details > summary { list-style: none; cursor: pointer; }
+details > summary::-webkit-details-marker { display: none; }
+details[open] .plus { transform: rotate(45deg); }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}

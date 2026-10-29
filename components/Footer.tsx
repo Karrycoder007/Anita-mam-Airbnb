@@ -27,7 +27,7 @@ export default function Footer() {
         </div>
       </div>
       <p className="mt-20 select-none font-display text-[clamp(5rem,22vw,21rem)] leading-[0.8] text-chalk/10">{site.name}</p>
-      <p className="mt-6 text-sm text-chalk/50">© {new Date().getFullYear()} {site.name}. Website by Karry Creative Studios.</p>
+      <p className="mt-6 text-sm text-chalk/50">© {new Date().getFullYear()} {site.name}. Website by Studio Solarch.</p>
     </footer>
   );
 }

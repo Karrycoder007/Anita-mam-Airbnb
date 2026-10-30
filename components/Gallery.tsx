@@ -4,48 +4,40 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { gallery } from "@/lib/site";
 
-// Desktop: section pins and photos travel sideways as you scroll. Mobile: swipeable row.
-const widths = ["md:w-[34vw]", "md:w-[26vw]", "md:w-[30vw]", "md:w-[40vw]", "md:w-[30vw]", "md:w-[34vw]"];
-const heights = ["md:h-[48vh]", "md:h-[60vh]", "md:h-[52vh]", "md:h-[62vh]", "md:h-[50vh]", "md:h-[58vh]"];
-const aligns = ["md:self-start", "md:self-end", "md:self-start", "md:self-end", "md:self-start", "md:self-end"];
+// Staggered editorial layout (desktop). Single column on phones, in the same order.
+const layout = [
+  "md:col-span-7 aspect-[4/3]",
+  "md:col-span-4 md:col-start-9 md:mt-28 aspect-[4/5]",
+  "md:col-span-5 md:col-start-2 aspect-[4/5]",
+  "md:col-span-5 md:col-start-8 md:mt-32 aspect-[4/3]",
+  "md:col-span-7 aspect-[16/10]",
+  "md:col-span-4 md:col-start-9 md:mt-20 aspect-[4/5]",
+];
 
 export default function Gallery() {
-  const section = useRef<HTMLElement>(null);
-  const track = useRef<HTMLDivElement>(null);
-  const bar = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState(0);
+  const root = useRef<HTMLElement>(null);
   const [open, setOpen] = useState<number | null>(null);
+  const next = () => setOpen((i) => (i! + 1) % gallery.length);
+  const prev = () => setOpen((i) => (i! - 1 + gallery.length) % gallery.length);
 
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
     const mm = gsap.matchMedia();
-    mm.add("(min-width: 768px)", () => {
-      const t = track.current!;
-      const dist = () => Math.max(0, t.scrollWidth - window.innerWidth);
-      const tween = gsap.to(t, {
-        x: () => -dist(),
-        ease: "none",
-        scrollTrigger: {
-          trigger: section.current,
-          start: "top top",
-          end: () => "+=" + dist(),
-          pin: true,
-          scrub: 0.6,
-          invalidateOnRefresh: true,
-          anticipatePin: 1,
-          onUpdate: (self) => {
-            if (bar.current) bar.current.style.transform = `scaleX(${self.progress})`;
-            setActive(Math.round(self.progress * (gallery.length - 1)));
-          },
-        },
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      gsap.from(".gh-line", { yPercent: 110, duration: 1.2, ease: "power4.out", stagger: 0.12, scrollTrigger: { trigger: ".gh-line", start: "top 88%" } });
+      gsap.from(".gh-sub", { opacity: 0, y: 20, duration: 1, delay: 0.3, scrollTrigger: { trigger: ".gh-line", start: "top 88%" } });
+
+      gsap.utils.toArray<HTMLElement>(".g-fig").forEach((fig) => {
+        const frame = fig.querySelector(".g-frame");
+        const im = fig.querySelector(".g-img");
+        const cap = fig.querySelector(".g-cap");
+        gsap.timeline({ scrollTrigger: { trigger: fig, start: "top 88%" } })
+          .fromTo(frame, { clipPath: "inset(100% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.4, ease: "expo.out" })
+          .fromTo(im, { scale: 1.3 }, { scale: 1, duration: 1.9, ease: "expo.out" }, 0)
+          .fromTo(cap, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, 0.6);
+        gsap.fromTo(im, { yPercent: -5 }, { yPercent: 5, ease: "none", scrollTrigger: { trigger: fig, start: "top bottom", end: "bottom top", scrub: true } });
       });
-      gsap.utils.toArray<HTMLElement>(".g-img").forEach((im) => {
-        gsap.fromTo(im, { xPercent: -7 }, {
-          xPercent: 7, ease: "none",
-          scrollTrigger: { trigger: im.parentElement, containerAnimation: tween, start: "left right", end: "right left", scrub: true },
-        });
-      });
-    });
+    }, root.current!);
     return () => mm.revert();
   }, []);
 
@@ -54,54 +46,52 @@ export default function Gallery() {
     document.body.style.overflow = "hidden";
     const k = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(null);
-      if (e.key === "ArrowRight") setOpen((i) => (i! + 1) % gallery.length);
-      if (e.key === "ArrowLeft") setOpen((i) => (i! - 1 + gallery.length) % gallery.length);
+      if (e.key === "ArrowRight") next();
+      if (e.key === "ArrowLeft") prev();
     };
     window.addEventListener("keydown", k);
     return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", k); };
   }, [open]);
 
   return (
-    <section ref={section} id="gallery" className="relative bg-forest py-24 text-chalk md:flex md:h-screen md:flex-col md:overflow-hidden md:py-0">
-      <div className="flex items-end justify-between px-6 md:px-12 md:pt-36">
-        <h2 className="font-display text-5xl leading-none md:text-7xl">A look around</h2>
-        <p className="hidden text-chalk/70 md:block">{gallery[active].cap}</p>
-      </div>
+    <section ref={root} id="gallery" className="px-6 py-28 md:px-12 md:py-44">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-16 flex flex-col justify-between gap-8 md:mb-24 md:flex-row md:items-end">
+          <h2 className="font-display text-6xl leading-[0.95] md:text-8xl">
+            <span className="h-mask"><span className="gh-line block">Photos of</span></span>
+            <span className="h-mask"><span className="gh-line block italic text-olive">the home</span></span>
+          </h2>
+          <p className="gh-sub max-w-xs text-lg leading-relaxed text-moss">A walk through the rooms, the pool and the small details. Tap any photo to see it larger.</p>
+        </div>
 
-      <div className="md:min-h-0 md:flex-1">
-        <div
-          ref={track}
-          className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 py-10 [scrollbar-width:none] md:h-full md:w-max md:snap-none md:items-center md:gap-8 md:overflow-visible md:px-12 md:py-0"
-        >
+        <div className="grid grid-cols-1 gap-x-6 gap-y-14 md:grid-cols-12 md:gap-y-12">
           {gallery.map((g, i) => (
-            <figure key={g.src} className={`w-[78vw] shrink-0 snap-center ${widths[i]} ${aligns[i]}`}>
-              <button
-                onClick={() => setOpen(i)}
-                aria-label={`Open photo: ${g.alt}`}
-                className={`relative block aspect-[4/5] w-full overflow-hidden rounded-2xl bg-moss md:aspect-auto ${heights[i]}`}
-              >
+            <figure key={g.src} className={`g-fig ${layout[i].replace(/aspect-\S+/, "")}`}>
+              <button onClick={() => setOpen(i)} aria-label={`Open photo: ${g.alt}`} className={`g-frame group relative block w-full overflow-hidden rounded-[1.25rem] bg-sage ${layout[i].match(/aspect-\S+/)![0]}`}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={g.src} alt={g.alt} loading="lazy" draggable={false} className="g-img absolute -left-[10%] top-0 h-full w-[120%] max-w-none object-cover" />
+                <img src={g.src} alt={g.alt} loading="lazy" className="g-img absolute -top-[6%] h-[112%] w-full object-cover" />
+                <span className="absolute bottom-4 right-4 grid h-12 w-12 place-items-center rounded-full bg-chalk/80 text-2xl text-forest backdrop-blur transition-all duration-300 group-hover:scale-110 group-hover:bg-chalk">+</span>
               </button>
-              <figcaption className="mt-3 text-[15px] text-chalk/70 md:hidden">{g.cap}</figcaption>
+              <figcaption className="g-cap mt-4 font-display text-2xl text-forest">{g.cap}</figcaption>
             </figure>
           ))}
         </div>
       </div>
 
-      <div className="hidden items-center gap-6 px-12 pb-10 md:flex">
-        <span className="text-sm text-chalk/60">Scroll to explore</span>
-        <div className="h-px flex-1 bg-chalk/20"><div ref={bar} className="h-px origin-left scale-x-0 bg-chalk" /></div>
-      </div>
-
       {open !== null && (
-        <div role="dialog" aria-modal="true" data-lenis-prevent className="fixed inset-0 z-[60] flex items-center justify-center bg-forest/95 p-4 md:p-12" onClick={() => setOpen(null)}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={gallery[open].src} alt={gallery[open].alt} className="max-h-full max-w-full rounded-xl object-contain" onClick={(e) => e.stopPropagation()} />
-          <p className="absolute bottom-5 left-1/2 -translate-x-1/2 text-chalk/80">{gallery[open].cap}</p>
-          <button className="absolute right-5 top-5 text-chalk" onClick={() => setOpen(null)}>Close</button>
-          <button className="absolute left-4 top-1/2 px-3 py-6 text-3xl text-chalk" aria-label="Previous" onClick={(e) => { e.stopPropagation(); setOpen((open - 1 + gallery.length) % gallery.length); }}>‹</button>
-          <button className="absolute right-4 top-1/2 px-3 py-6 text-3xl text-chalk" aria-label="Next" onClick={(e) => { e.stopPropagation(); setOpen((open + 1) % gallery.length); }}>›</button>
+        <div role="dialog" aria-modal="true" data-lenis-prevent className="fixed inset-0 z-[60] flex flex-col bg-forest/95 p-4 md:p-8" onClick={() => setOpen(null)}>
+          <div className="flex items-center justify-between text-chalk">
+            <p className="font-display text-2xl">{gallery[open].cap}</p>
+            <button onClick={() => setOpen(null)} className="rounded-full border border-chalk/40 px-6 py-3 text-lg">Close</button>
+          </div>
+          <div className="flex min-h-0 flex-1 items-center justify-center py-4">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={gallery[open].src} alt={gallery[open].alt} className="max-h-full max-w-full rounded-xl object-contain" onClick={(e) => e.stopPropagation()} />
+          </div>
+          <div className="flex justify-center gap-4" onClick={(e) => e.stopPropagation()}>
+            <button onClick={prev} className="rounded-full bg-chalk px-8 py-3 text-lg text-forest">← Previous</button>
+            <button onClick={next} className="rounded-full bg-chalk px-8 py-3 text-lg text-forest">Next →</button>
+          </div>
         </div>
       )}
     </section>

@@ -7,6 +7,11 @@ export const site = {
   whatsapp: "919999999999", // country code + number, no + or spaces
   email: "stay@casaolivar.in",
   airbnbUrl: "#", // paste the Airbnb listing link
+  socials: {
+    instagram: "https://instagram.com/yourhandle", // paste full link. Use "" to hide a button
+    facebook: "",
+    youtube: "",
+  },
   rating: "4.9",
   reviews: 86,
   price: "₹9,500",
@@ -26,12 +31,12 @@ export const img = {
 };
 
 export const gallery = [
-  { src: img.pool, alt: "The pool at golden hour", cap: "The pool, ten steps from the door", cls: "md:col-span-7 aspect-[4/3]" },
-  { src: img.living, alt: "Living room", cap: "Living room with pool view", cls: "md:col-span-5 aspect-[4/5]" },
-  { src: img.bed1, alt: "Master bedroom", cap: "Master bedroom", cls: "md:col-span-4 aspect-[4/5]" },
-  { src: img.decor, alt: "Dining area", cap: "Dining for eight", cls: "md:col-span-8 aspect-[16/10]" },
-  { src: img.kitchen, alt: "Kitchen", cap: "Fully equipped kitchen", cls: "md:col-span-6 aspect-[4/3]" },
-  { src: img.bath, alt: "Bathroom", cap: "Ensuite bathroom", cls: "md:col-span-6 aspect-[4/3]" },
+  { src: img.pool, alt: "The pool at golden hour", cap: "The pool, ten steps from the door" },
+  { src: img.living, alt: "Living room", cap: "Living room with pool view" },
+  { src: img.bed1, alt: "Master bedroom", cap: "Master bedroom" },
+  { src: img.decor, alt: "Dining area", cap: "Dining for eight" },
+  { src: img.kitchen, alt: "Kitchen", cap: "Fully equipped kitchen" },
+  { src: img.bath, alt: "Bathroom", cap: "Ensuite bathroom" },
 ];
 
 export const spaces = [
@@ -51,17 +56,17 @@ export const amenities = [
 ];
 
 export const nearby = [
-  { name: "Calangute Beach", time: "5 min drive" },
-  { name: "Baga and Tito's Lane", time: "10 min drive" },
-  { name: "Saturday Night Market, Arpora", time: "15 min drive" },
-  { name: "Dabolim Airport (GOI)", time: "55 min drive" },
-  { name: "Mopa Airport (GOX)", time: "40 min drive" },
+  { name: "Calangute Beach", tag: "Beach", time: "5 min drive", img: u("photo-1507525428034-b723cf961d3e") },
+  { name: "Baga and Tito's Lane", tag: "Cafes and nightlife", time: "10 min drive", img: u("photo-1514933651103-005eec06c04b") },
+  { name: "Saturday Night Market", tag: "Food and shopping", time: "15 min drive", img: u("photo-1555939594-58d7cb561ad1") },
+  { name: "Mopa or Dabolim Airport", tag: "Getting here", time: "40 to 55 min drive", img: u("photo-1436491865332-7a61a109cc05") },
 ];
 
 export const reviews = [
-  { q: "Opened the curtains and the pool was right there. We barely left the house for two days.", n: "Sample review, Mumbai" },
-  { q: "Spotless, well stocked kitchen and the host replied to every message within minutes.", n: "Sample review, Bengaluru" },
-  { q: "Perfect for our group of six. Everyone had their own room and the pool was ours in the mornings.", n: "Sample review, Pune" },
+  { q: "Opened the curtains and the pool was right there. We barely left the house for two days.", name: "Priya and family", place: "Mumbai", photo: u("photo-1494790108377-be9c29b29330") },
+  { q: "Spotless, well stocked kitchen and the host replied to every message within minutes.", name: "Rahul Mehta", place: "Bengaluru", photo: u("photo-1507003211169-0a1dd7228f2d") },
+  { q: "Perfect for our group of six. Everyone had their own room and the pool was ours in the mornings.", name: "Ananya Rao", place: "Pune", photo: u("photo-1438761681033-6461ffad8d80") },
+  { q: "Easy check-in, quiet at night, and the beach is close. We will be back next season.", name: "Vikram Shah", place: "Delhi", photo: u("photo-1500648767791-00dcc994a43e") },
 ];
 
 export const faqs = [
